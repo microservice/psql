@@ -1,62 +1,91 @@
 entrypoint:
   help: |
     Run psql in a story
-  additional_args: true
-  additional_kwargs: true
+  arguments:
+    query:
+      type: string
+      required: true
 
-env:
+environment:
   PGHOST:
     help: behaves the same as the host connection parameter.
+    type: string
   PGHOSTADDR:
     help: behaves the same as the hostaddr connection parameter. This can be set instead of or in addition to PGHOST to avoid DNS lookup overhead.
+    type: string
   PGPORT:
     help: behaves the same as the port connection parameter.
+    type: int
     default: 5432
   PGDATABASE:
     help: behaves the same as the dbname connection parameter.
+    type: string
   PGUSER:
     help: behaves the same as the user connection parameter.
+    type: string
   PGPASSWORD:
     help: behaves the same as the password connection parameter. Use of this environment variable is not recommended for security reasons, as some operating systems allow non-root users to see process environment variables via ps; instead consider using the ~/.pgpass file (see Section 31.14).
+    type: string
   PGPASSFILE:
     help: specifies the name of the password file to use for lookups. If not set, it defaults to ~/.pgpass (see Section 31.14).
+    type: string
   PGSERVICE:
     help: behaves the same as the service connection parameter.
+    type: string
   PGSERVICEFILE:
     help: specifies the name of the per-user connection service file. If not set, it defaults to ~/.pg_service.conf (see Section 31.15).
+    type: string
   PGREALM:
     help: sets the Kerberos realm to use with PostgreSQL, if it is different from the local realm. If PGREALM is set, libpq applications will attempt authentication with servers for this realm and use separate ticket files to avoid conflicts with local ticket files. This environment variable is only used if Kerberos authentication is selected by the server.
+    type: string
   PGOPTIONS:
     help: behaves the same as the options connection parameter.
+    type: string
   PGAPPNAME:
     help: behaves the same as the application_name connection parameter.
+    type: string
   PGSSLMODE:
     help: behaves the same as the sslmode connection parameter.
+    type: string
   PGREQUIRESSL:
     help: behaves the same as the requiressl connection parameter.
+    type: string
   PGSSLCERT:
     help: behaves the same as the sslcert connection parameter.
+    type: string
   PGSSLKEY:
     help: behaves the same as the sslkey connection parameter.
+    type: string
   PGSSLROOTCERT:
     help: behaves the same as the sslrootcert connection parameter.
+    type: string
   PGSSLCRL:
     help: behaves the same as the sslcrl connection parameter.
+    type: string
   PGKRBSRVNAME:
     help: behaves the same as the krbsrvname connection parameter.
+    type: string
   PGGSSLIB:
     help: behaves the same as the gsslib connection parameter.
+    type: string
   PGCONNECT_TIMEOUT:
     help: behaves the same as the connect_timeout connection parameter.
+    type: string
   PGDATESTYLE:
     help: sets the default style of date/time representation. (Equivalent to SET datestyle TO ....)
+    type: string
   PGTZ:
     help: sets the default time zone. (Equivalent to SET timezone TO ....)
+    type: string
   PGCLIENTENCODING:
     help: sets the default client character set encoding. (Equivalent to SET client_encoding TO ....)
+    type: string
   PGGEQO:
     help: sets the default mode for the genetic query optimizer. (Equivalent to SET geqo TO ....)
+    type: string
   PGSYSCONFDIR:
     help: sets the directory containing the pg_service.conf file and in a future version possibly other system-wide configuration files.
+    type: string
   PGLOCALEDIR:
     help: sets the directory containing the locale files for message internationalization.
+    type: string
