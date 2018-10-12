@@ -3,10 +3,10 @@ lifecycle:
   startup:
     command: ["python", "/app/app.py"]
 commands:
-  select:
+  exec:
     help: Run a SELECT statement
     http:
-      path: /select
+      path: /execute
       port: 8000
       method: post
       contentType: application/json

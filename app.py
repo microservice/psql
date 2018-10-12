@@ -11,8 +11,8 @@ from psycopg2.extras import RealDictCursor
 app = Flask(__name__)
 
 
-@app.route('/select', methods=['post'])
-def select():
+@app.route('/execute', methods=['post'])
+def execute():
     req = request.get_json()
     query = req['query']
     args = req.get('data', {})
@@ -23,6 +23,7 @@ def select():
     try:
         cur.execute(query, args)
         results = cur.fetchall()
+        conn.commit()
     except BaseException as e:
         traceback.print_exc(e)
         resp = make_response('{"status": "fail"}')
