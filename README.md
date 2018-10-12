@@ -1,13 +1,12 @@
 # Asyncy Postgres
 
 This container should be used for raw psql access.
-The output is not parsed into json format.
+The output is always returned in JSON format.
 
 #### Example
 
 ```storyscript
 # Storyscript
-result = psql -c "select true"
+result = psql exec query: 'select * from my_table where name=%(username)s' data: {'username': 'jill'}
+# result is an array, with records as JSON objects inside it.
 ```
-
-The result is the raw output from Postgres.
