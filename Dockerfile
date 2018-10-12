@@ -1,3 +1,10 @@
-FROM          alpine:3.7
-RUN           apk add --no-cache postgresql-client
-ENTRYPOINT    ["/usr/bin/psql"]
+FROM          python:3.6.6
+
+RUN           mkdir /app
+
+COPY          requirements.txt /app
+RUN           pip install -r /app/requirements.txt
+
+COPY          app.py /app
+
+ENTRYPOINT    ["python", "/app/app.py"]
