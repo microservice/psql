@@ -14,6 +14,7 @@ commands:
       query:
         help: The query
         required: true
+        in: requestBody
         type: string
       data:
         help: |
@@ -21,6 +22,7 @@ commands:
           SELECT * from my_table where name=%(username)s
           then specify "data" as {"name": "foo"}.
         required: false
+        in: requestBody
         type: map
 
 environment:
