@@ -21,7 +21,7 @@ def execute():
                           cursor_factory=RealDictCursor) as conn:
         with conn.cursor() as cur:
             cur.execute(query, args)
-            return cur.fetchall()
+            return jsonify(cur.fetchall())
 
 
 def app_error(e):
