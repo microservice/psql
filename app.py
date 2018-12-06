@@ -21,7 +21,8 @@ def postgres_dsn():
 
 class SimplePostgres:
     """
-    Provides a cursor to connection to Postgres instance in a with context.
+    Provides a cursor to a connection to a Postgres instance
+    in a 'with' context.
     """
 
     def __enter__(self):
@@ -38,8 +39,10 @@ class SimplePostgres:
     def __exit__(self, exc_type, exc_value, traceback):
         try:
             self.conn.commit()
-        # There's an exception listener, so we want to re-raise the exception
-        # But make sure all connections are properly closed
+        # There's a global exception listener, so we want to re-raise
+        # the exceptions.
+        # However, we need to make sure that all connections and cursors
+        # are properly closed
         except Exception as e:
             raise e
         finally:
