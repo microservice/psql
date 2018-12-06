@@ -4,7 +4,7 @@ import json
 import os
 import traceback
 
-from flask import Flask, jsonify, make_response, request
+from flask import Flask, jsonify, request
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -14,37 +14,19 @@ app = Flask(__name__)
 
 @app.route('/execute', methods=['post'])
 def execute():
-    req = request.get_json()
+    req = request.json
     query = req['query']
     args = req.get('data', {})
-    conn = psycopg2.connect(os.environ.get('POSTGRES_DSN'),
-                            cursor_factory=RealDictCursor)
-    cur = conn.cursor()
-
-    try:
-        cur.execute(query, args)
-        results = cur.fetchall()
-        conn.commit()
-    except BaseException as e:
-        traceback.print_exc(e)
-        resp = make_response('{"status": "fail"}')
-        resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-        return resp
-    finally:
-        cur.close()
-        conn.close()
-
-    res = {
-        'status': 'ok',
-        'results': results
-    }
-    resp = make_response(json.dumps(res))
-    resp.headers['Content-Type'] = 'application/json; charset=utf-8'
-    return resp
+    with psycopg2.connect(os.environ.get('POSTGRES_DSN'),
+                          cursor_factory=RealDictCursor) as conn:
+        with conn.cursor() as cur:
+            cur.execute(query, args)
+            return cur.fetchall()
 
 
 def app_error(e):
-    return jsonify({"message": str(e)}), 400
+    print(traceback.format_exc())
+    return jsonify({"message": repr(e)}), 400
 
 
 if __name__ == "__main__":
