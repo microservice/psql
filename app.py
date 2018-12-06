@@ -30,5 +30,7 @@ def app_error(e):
 
 
 if __name__ == "__main__":
+    assert 'POSTGRES_DSN' in os.environ, \
+        "The environment variable 'POSTGRES_DSN' must be set."
     app.register_error_handler(Exception, app_error)
     app.run(host='0.0.0.0', port=8000)
