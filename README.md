@@ -42,13 +42,13 @@ psql insert table: 'books' values: [{'title': 'Moby Dick'}, {'title': 'War and P
 ```coffee
 # Storyscript
 psql select table: 'books' where: {'title': 'Moby Dick'}
-# result: [{'id': 2, title: 'Moby Dick'}]
+# result: [{'id': 2, 'title': 'Moby Dick'}]
 ```
 
 ```coffee
 # Storyscript
-psql select table: 'books' where: {'$or': {title: 'Moby Dick', 'id: {'$lt': 2}}}
-# result: [{'id': 1, 'title': 'Ulysses'}, {'id': 2, title: 'Moby Dick'}]
+psql select table: 'books' where: {'$or': {title: 'Moby Dick', 'id': {'$lt': 2}}}
+# result: [{'id': 1, 'title': 'Ulysses'}, {'id': 2, 'title': 'Moby Dick'}]
 ```
 
 ### Update entries
@@ -56,7 +56,7 @@ psql select table: 'books' where: {'$or': {title: 'Moby Dick', 'id: {'$lt': 2}}}
 ```coffee
 # Storyscript
 psql update table: 'books' values: {'title': 'UPDATED'} where: {'id': {'$gt': 2}}
-# result: [{'id': 3, title: 'UPDATED'}]
+# result: [{'id': 3, 'title': 'UPDATED'}]
 ```
 
 The where query is optional, but without it _all_ columns will be updated:
@@ -78,7 +78,7 @@ psql update table: 'books' values: {'title': 'UPDATED'}
 ```coffee
 # Storyscript
 psql delete table: 'books' where: {'title': 'Moby Dick'}
-# result: [{'id': 2, title: 'Moby Dick'}]
+# result: [{'id': 2, 'title': 'Moby Dick'}]
 ```
 
 The where query is optional, but without it _all_ columns will be deleted.
