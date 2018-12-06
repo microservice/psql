@@ -4,7 +4,7 @@ import json
 import os
 import traceback
 
-from flask import Flask, request, make_response
+from flask import Flask, jsonify, make_response, request
 
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -43,5 +43,10 @@ def execute():
     return resp
 
 
+def app_error(e):
+    return jsonify({"message": str(e)}), 400
+
+
 if __name__ == "__main__":
+    app.register_error_handler(Exception, app_error)
     app.run(host='0.0.0.0', port=8000)
