@@ -3,6 +3,131 @@ lifecycle:
   startup:
     command: ["python", "/app/app.py"]
 actions:
+  create_table:
+    help: Create a table
+    http:
+      path: /tables/create
+      port: 8000
+      method: post
+      contentType: application/json
+    arguments:
+      table:
+        help: The table to create
+        required: true
+        in: requestBody
+        type: string
+      columns:
+        help: |
+          A map of the to be created columns with their respective types
+          Please refer to
+          https://www.postgresql.org/docs/9.1/sql-createtable.html for more help.
+        required: true
+        in: requestBody
+        type: map
+  drop_table:
+    help: Drop a table
+    http:
+      path: /tables/drop
+      port: 8000
+      method: post
+      contentType: application/json
+    arguments:
+      table:
+        help: The table to drop
+        required: true
+        in: requestBody
+        type: string
+  insert:
+    help: Insert one or more entries into a table
+    http:
+      path: /insert
+      port: 8000
+      method: post
+      contentType: application/json
+    arguments:
+      table:
+        help: The table to insert entries into
+        required: true
+        in: requestBody
+        type: string
+      values:
+        help: |
+          A map or a list of maps with the values to insert into the table.
+        required: true
+        in: requestBody
+        type: any
+  select:
+    help: Select entries from a table
+    http:
+      path: /select
+      port: 8000
+      method: post
+      contentType: application/json
+    arguments:
+      table:
+        help: The table to select entries from
+        required: true
+        in: requestBody
+        type: string
+      where:
+        help: |
+          A query string of the parameters to filter on, e.g.
+          `{'columnName1': 'value2', 'columnName2': 'value2'}`
+          Use `{'$or': {cond1, cond2}} for `OR` chains.
+          Use e.g. `{'columName': {'$gt': 20}}} for more advanced comparisons.
+        required: true
+        in: requestBody
+        type: any
+  update:
+    help: Update entries in a table
+    http:
+      path: /update
+      port: 8000
+      method: post
+      contentType: application/json
+    arguments:
+      table:
+        help: The table to update entries in
+        required: true
+        in: requestBody
+        type: string
+      values:
+        help: |
+          A map of values to update.
+        required: true
+        in: requestBody
+        type: map
+      where:
+        help: |
+          A query string of the parameters to filter on, e.g.
+          `{'columnName1': 'value2', 'columnName2': 'value2'}`
+          Use `{'$or': {cond1, cond2}} for `OR` chains.
+          Use e.g. `{'columName': {'$gt': 20}}} for more advanced comparisons.
+        required: false
+        in: requestBody
+        type: any
+  delete:
+    help: Delete entries from a table
+    http:
+      path: /delete
+      port: 8000
+      method: post
+      contentType: application/json
+    arguments:
+      table:
+        help: The table to delete entries from
+        required: true
+        in: requestBody
+        type: string
+      where:
+        help: |
+          A query string of the parameters to filter on, e.g.
+          `{'columnName1': 'value2', 'columnName2': 'value2'}`
+          Use `{'$or': {cond1, cond2}} for `OR` chains.
+          Use e.g. `{'columName': {'$gt': 20}}} for more advanced comparisons.
+        required: false
+        in: requestBody
+        type: any
   exec:
     help: Run a SELECT statement
     http:
