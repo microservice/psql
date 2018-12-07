@@ -81,7 +81,7 @@ psql delete table: 'books' where: {'title': 'Moby Dick'}
 # result: [{'id': 2, 'title': 'Moby Dick'}]
 ```
 
-The where query is optional, but without it _all_ columns will be deleted.
+The where query is optional, but without it _all_ rows will be deleted.
 
 ### Drop table
 
