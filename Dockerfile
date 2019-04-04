@@ -1,9 +1,13 @@
-FROM          python:3.6.6
+FROM          python:3.7-alpine
 
 RUN           mkdir /app
-
 COPY          requirements.txt /app
-RUN           pip install -r /app/requirements.txt
+
+RUN apk update && \
+ apk add postgresql-libs && \
+ apk add --virtual .build-deps gcc musl-dev postgresql-dev && \
+ pip install -r /app/requirements.txt --no-cache-dir && \
+ apk --purge del .build-deps
 
 COPY          app.py /app
 
