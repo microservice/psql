@@ -248,6 +248,11 @@ def tables_create():
         return jsonify({})
 
 
+@app.route('/health', methods=['get'])
+def health():
+    return 'OK'
+
+
 def app_error(e):
     print(traceback.format_exc())
     return jsonify({'message': repr(e)}), 400
