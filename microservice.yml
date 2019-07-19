@@ -1,4 +1,11 @@
 omg: 1
+info:
+  version: 1.0.0
+  title: PSQL
+  description: Interact with a Postgres database
+  license:
+    name: Apache 2.0
+    url: https://opensource.org/licenses/Apache-2.0
 lifecycle:
   startup:
     command: ["python", "/app/app.py"]
@@ -6,6 +13,10 @@ info:
   version: 1.0.0
   title: PostgreSQL
   description: This is a PostgreSQL service.
+health:
+  http:
+    path: /health
+    port: 8000
 actions:
   createTable:
     help: Create a table
