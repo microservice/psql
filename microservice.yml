@@ -9,10 +9,6 @@ info:
 lifecycle:
   startup:
     command: ["python", "/app/app.py"]
-info:
-  version: 1.0.0
-  title: PostgreSQL
-  description: This is a PostgreSQL service.
 health:
   http:
     path: /health
@@ -39,6 +35,8 @@ actions:
         required: true
         in: requestBody
         type: map
+    output:
+      type: none
   dropTable:
     help: Drop a table
     http:
@@ -52,6 +50,8 @@ actions:
         required: true
         in: requestBody
         type: string
+    output:
+      type: none
   insert:
     help: Insert one or more entries into a table
     http:
@@ -71,6 +71,8 @@ actions:
         required: true
         in: requestBody
         type: any
+    output:
+      type: none
   select:
     help: Select entries from a table
     http:
@@ -93,6 +95,11 @@ actions:
         required: true
         in: requestBody
         type: any
+    output:
+      type: list
+      list:
+        elements:
+          type: map
   update:
     help: Update entries in a table
     http:
@@ -121,6 +128,8 @@ actions:
         required: false
         in: requestBody
         type: any
+    output:
+      type: none
   delete:
     help: Delete entries from a table
     http:
@@ -142,7 +151,9 @@ actions:
           Use e.g. `{'columName': {'$gt': 20}}} for more advanced comparisons.
         required: false
         in: requestBody
-        type: any
+        type: map
+    output:
+      type: none
   exec:
     help: Run a SELECT statement
     http:
@@ -164,8 +175,11 @@ actions:
         required: false
         in: requestBody
         type: map
+    output:
+      type: any
 
 environment:
   POSTGRES_DSN:
     help: The DSN to connect to PostgresSQL.
     type: string
+    required: true
