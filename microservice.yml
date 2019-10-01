@@ -75,7 +75,7 @@ actions:
           `{'columnName1': 'value2', 'columnName2': 'value2'}`
           Use `{'$or': {cond1, cond2}} for `OR` chains.
           Use e.g. `{'columName': {'$gt': 20}}} for more advanced comparisons.
-        required: true
+        required: false
         in: requestBody
         type: any
   update:
