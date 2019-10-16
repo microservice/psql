@@ -160,6 +160,12 @@ class QueryBuilder:
 
     @staticmethod
     def build_query(where):
+        if where is None or len(where) == 0:
+            return {
+                'query': '',
+                'params': []
+            }
+
         builder = QueryBuilder()
         query = builder.group(where, 'AND')
         return {
@@ -172,12 +178,13 @@ class QueryBuilder:
 def delete():
     req = request.json
     table = req['table']
-    where = req['where']
+    where = req.get('where', None)
 
-    query = QueryBuilder.build_query(where)
     where_str = ""
-    if len(query['query']) > 0:
+    query = QueryBuilder.build_query(where)
+    if len(query['params']) > 0:
         where_str = f"WHERE ({query['query']}) "
+
     sql = f"DELETE FROM {table} {where_str} RETURNING *"
     with SimplePostgres() as cur:
         cur.execute(sql, query['params'])
@@ -188,10 +195,12 @@ def delete():
 def select():
     req = request.json
     table = req['table']
-    where = req['where']
+    where = req.get('where', None)
 
+    sql = f"SELECT * FROM {table}"
     query = QueryBuilder.build_query(where)
-    sql = f"SELECT * FROM {table} WHERE ({query['query']})"
+    if len(query['params']) > 0:
+        sql += f" WHERE ({query['query']})"
     with SimplePostgres() as cur:
         cur.execute(sql, query['params'])
         return jsonify(cur.fetchall())
