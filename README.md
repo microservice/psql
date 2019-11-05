@@ -11,24 +11,24 @@ Interact with a Postgres database.
 A table can be created with `createTable`:
 
 ```coffee
-psql createTable table: 'books' columns: {
-  'id': 'serial primary key',
-  'title': 'varchar(100)'
+psql createTable table: "books" columns: {
+  "id": "serial primary key",
+  "title": "varchar(100)"
 }
 ```
 
 ### Insert an entry
 
 ```coffee
-psql insert table: 'books' values: {'title': 'Ulysses'}
-# result: {'id': 1, 'title': 'Ulysses'}
+psql insert table: "books" values: {"title": "Ulysses"}
+# result: {"id": 1, "title": "Ulysses"}
 ```
 
 ### Insert multiple entries
 
 ```coffee
-psql insert table: 'books' values: [{'title': 'Moby Dick'}, {'title': 'War and Peace'}]
-# result: [{'id': 2, 'title': 'Ulysses'}, {'id': 3, 'title': 'War and Peace'}]
+psql insert table: "books" values: [{"title": "Moby Dick"}, {"title": "War and Peace"}]
+# result: [{"id": 2, "title": "Ulysses"}, {"id": 3, "title": "War and Peace"}]
 ```
 
 ### Select entries
@@ -38,30 +38,30 @@ psql insert table: 'books' values: [{'title': 'Moby Dick'}, {'title': 'War and P
 - if no comparison operators is provided, the query will match on equality
 
 ```coffee
-psql select table: 'books' where: {'title': 'Moby Dick'}
-# result: [{'id': 2, 'title': 'Moby Dick'}]
+psql select table: "books" where: {"title": "Moby Dick"}
+# result: [{"id": 2, "title": "Moby Dick"}]
 ```
 
 ```coffee
-psql select table: 'books' where: {'$or': {title: 'Moby Dick', 'id': {'$lt': 2}}}
-# result: [{'id': 1, 'title': 'Ulysses'}, {'id': 2, 'title': 'Moby Dick'}]
+psql select table: "books" where: {"$or": {title: "Moby Dick", "id": {"$lt": 2}}}
+# result: [{"id": 1, "title": "Ulysses"}, {"id": 2, "title": "Moby Dick"}]
 ```
 
 ### Update entries
 
 ```coffee
-psql update table: 'books' values: {'title': 'UPDATED'} where: {'id': {'$gt': 2}}
-# result: [{'id': 3, 'title': 'UPDATED'}]
+psql update table: "books" values: {"title": "UPDATED"} where: {"id": {"$gt": 2}}
+# result: [{"id": 3, "title": "UPDATED"}]
 ```
 
 The where query is optional, but without it _all_ columns will be updated:
 
 ```coffee
-psql update table: 'books' values: {'title': 'UPDATED'}
+psql update table: "books" values: {"title": "UPDATED"}
 # result: [
-#     {'id': 1, 'title': 'Ulysses'},
-#     {'id': 2, 'title': 'Ulysses'},
-#     {'id': 3, 'title': 'War and Peace'}
+#     {"id": 1, "title": "Ulysses"},
+#     {"id": 2, "title": "Ulysses"},
+#     {"id": 3, "title": "War and Peace"}
 # ]
 ```
 
@@ -70,8 +70,8 @@ psql update table: 'books' values: {'title': 'UPDATED'}
 `delete` uses a `where` select query and will return the deleted columns:
 
 ```coffee
-psql delete table: 'books' where: {'title': 'Moby Dick'}
-# result: [{'id': 2, 'title': 'Moby Dick'}]
+psql delete table: "books" where: {"title": "Moby Dick"}
+# result: [{"id": 2, "title": "Moby Dick"}]
 ```
 
 The where query is optional, but without it _all_ rows will be deleted.
@@ -81,14 +81,14 @@ The where query is optional, but without it _all_ rows will be deleted.
 An entire table can be dropped with `dropTable`:
 
 ```coffee
-psql dropTable table: 'books'
+psql dropTable table: "books"
 ```
 
 ### Execute
 
 ```storyscript
 # Storyscript
-result = psql exec query: 'select * from my_table where name=%(username)s' data: {'username': 'jill'}
+result = psql exec query: "select * from my_table where name=%(username)s" data: {"username": "jill"}
 # result is an array, with records as JSON objects inside it.
 ```
 
