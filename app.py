@@ -191,13 +191,39 @@ def delete():
         return jsonify(cur.fetchall())
 
 
+def check_valid_sql_ident(ident):
+    """
+    https://www.postgresql.org/docs/9.6/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS
+    """
+    # For simplification diacritical marks and non-Latin-letters are rejected
+    # for now.
+    if not isinstance(ident, str) or len(ident) == 0:
+        return False
+    if not ident[0].isalnum():
+        return False
+    for c in ident:
+        if not (c.isalnum() or c in "_$"):
+            return False
+    return True
+
+
 @app.route('/select', methods=['post'])
 def select():
     req = request.json
     table = req['table']
     where = req.get('where', None)
+    columns = req.get('columns', None)
 
-    sql = f"SELECT * FROM {table}"
+    if columns is None:
+        columns = '*'
+    else:
+        assert isinstance(columns, list)
+        # validate columns
+        for column in columns:
+            assert check_valid_sql_ident(column)
+        columns = ','.join(f'"{col}"' for col in columns)
+
+    sql = f"SELECT {columns} FROM {table}"
     query = QueryBuilder.build_query(where)
     if len(query['params']) > 0:
         sql += f" WHERE ({query['query']})"
