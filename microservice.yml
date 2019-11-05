@@ -53,7 +53,7 @@ actions:
     output:
       type: none
   insert:
-    help: Insert one or more entries into a table
+    help: Insert one entry into a table.
     http:
       path: /insert
       port: 8000
@@ -67,12 +67,80 @@ actions:
         type: string
       values:
         help: |
-          A map or a list of maps with the values to insert into the table.
-        required: true
+          DEPRECATED. Use insertMany or 'value'.
         in: requestBody
         type: any
+      value:
+        help: |
+          A map of the fields of the value to be inserted into the table.
+        required: true
+        in: requestBody
+        type: map
+        map:
+          keys:
+            type: string
+          values:
+            type: any
+      returning:
+        help: Columns to be returned. By default all.
+        required: false
+        in: requestBody
+        type: list
+        list:
+          elements:
+            type: string
     output:
-      type: none
+      type: map
+      map:
+        keys:
+          type: string
+        values:
+          type: any
+  insertMany:
+    help: Insert many entry into a table.
+    http:
+      path: /insert
+      port: 8000
+      method: post
+      contentType: application/json
+    arguments:
+      table:
+        help: The table to insert entries into
+        required: true
+        in: requestBody
+        type: string
+      values:
+        help: |
+          A list of maps with the values to insert into the table.
+        required: true
+        in: requestBody
+        type: list
+        list:
+          elements:
+            type: map
+            map:
+              keys:
+                type: string
+              values:
+                type: any
+      returning:
+        help: Columns to be returned. By default all.
+        required: false
+        in: requestBody
+        type: list
+        list:
+          elements:
+            type: string
+    output:
+      type: list
+      list:
+        elements:
+          type: map
+          map:
+            keys:
+              type: string
+            values:
+              type: any
   select:
     help: Select entries from a table
     http:
@@ -92,7 +160,7 @@ actions:
         type: list
         list:
           elements:
-            string
+            type: string
       where:
         help: |
           A query string of the parameters to filter on, e.g.
