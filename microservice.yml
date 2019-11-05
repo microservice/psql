@@ -82,10 +82,17 @@ actions:
       contentType: application/json
     arguments:
       table:
-        help: The table to select entries from
+        help: The table to select entries from.
         required: true
         in: requestBody
         type: string
+      columns:
+        help: An optional list of columns to select.
+        in: requestBody
+        type: list
+        list:
+          elements:
+            string
       where:
         help: |
           A query string of the parameters to filter on, e.g.

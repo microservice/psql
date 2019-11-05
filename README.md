@@ -36,6 +36,7 @@ psql insert table: 'books' values: [{'title': 'Moby Dick'}, {'title': 'War and P
 - `$and` and `$or` can be used to combine queries
 - `$lt`, `$lte`, `$gt`, `$gte` and `$eq` can be used as comparison operators
 - if no comparison operators is provided, the query will match on equality
+- `columns` can be used to filter the selected fields
 
 ```coffee
 psql select table: 'books' where: {'title': 'Moby Dick'}
@@ -45,6 +46,11 @@ psql select table: 'books' where: {'title': 'Moby Dick'}
 ```coffee
 psql select table: 'books' where: {'$or': {title: 'Moby Dick', 'id': {'$lt': 2}}}
 # result: [{'id': 1, 'title': 'Ulysses'}, {'id': 2, 'title': 'Moby Dick'}]
+```
+
+```coffee
+psql select table: 'books' columns: ['title'] where: {'title': 'Moby Dick'}
+# result: [{'title': 'Moby Dick'}]
 ```
 
 ### Update entries
