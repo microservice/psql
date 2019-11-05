@@ -86,26 +86,70 @@ class InsertBuilder:
         return ','.join(self.value_strs)
 
 
+def sql_columns(columns):
+    """
+    Build a SQL string of column names.
+    """
+    if columns is None:
+        return '*'
+
+    assert isinstance(columns, list)
+    # validate columns
+    for column in columns:
+        assert check_valid_sql_ident(column)
+
+    return ','.join(f'"{col}"' for col in columns)
+
+
 @app.route('/insert', methods=['post'])
 def insert():
+    req = request.json
+    table = req['table']
+    returning = req.get('returning', None)
+    if 'values' in req:
+        value = req['values']
+        # maintain backwards compatibility
+        if isinstance(value, list):
+            return _insertMany(table, value, returning)
+        # values was allowed to be either a list (->many) or a dict
+        assert isinstance(value, dict)
+    else:
+        value = req['value']
+
     builder = InsertBuilder()
+    builder.add(value)
+    returning = sql_columns(returning)
+    sql = (f"INSERT INTO {table} ({builder.names()}) "
+           f"VALUES {builder.values()} RETURNING {returning}")
+    with SimplePostgres() as cur:
+        cur.execute(sql, builder.params)
+        return jsonify(cur.fetchone())
+
+
+@app.route('/insertMany', methods=['post'])
+def insertMany():
     req = request.json
     table = req['table']
     values = req['values']
+    returning = req.get('returning', None)
+    return _insertMany(table, values, returning)
+
+
+def _insertMany(table, values, returning):
+    """
+    Allows to insert multiple values into a table.
+    """
+    builder = InsertBuilder()
     # allow one or multiple insert entries
-    if isinstance(values, list):
-        for e in values:
-            builder.add(e)
-    else:
-        builder.add(values)
+    assert isinstance(values, list)
+    for e in values:
+        builder.add(e)
+    returning = sql_columns(returning)
     sql = (f"INSERT INTO {table} ({builder.names()}) "
-           f"VALUES {builder.values()} RETURNING *")
+           f"VALUES {builder.values()} RETURNING {returning}")
     with SimplePostgres() as cur:
         cur.execute(sql, builder.params)
-        if isinstance(values, list):
-            return jsonify(cur.fetchall())
-        else:
-            return jsonify(cur.fetchone())
+        return jsonify(cur.fetchall())
 
 
 class QueryBuilder:
@@ -213,15 +257,7 @@ def select():
     table = req['table']
     where = req.get('where', None)
     columns = req.get('columns', None)
-
-    if columns is None:
-        columns = '*'
-    else:
-        assert isinstance(columns, list)
-        # validate columns
-        for column in columns:
-            assert check_valid_sql_ident(column)
-        columns = ','.join(f'"{col}"' for col in columns)
+    columns = sql_columns(columns)
 
     sql = f"SELECT {columns} FROM {table}"
     query = QueryBuilder.build_query(where)
