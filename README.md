@@ -49,8 +49,8 @@ psql select table: "books" where: {"$or": {title: "Moby Dick", "id": {"$lt": 2}}
 ```
 
 ```coffee
-psql select table: 'books' columns: ['title'] where: {'title': 'Moby Dick'}
-# result: [{'title': 'Moby Dick'}]
+psql select table: "books" columns: ["title"] where: {"title": "Moby Dick"}
+# result: [{"title": "Moby Dick"}]
 ```
 
 ### Update entries
