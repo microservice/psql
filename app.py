@@ -16,7 +16,7 @@ def postgres_dsn():
     """
     Returns the DSN string for connecting with postgres
     """
-    return os.environ.get('POSTGRES_DSN')
+    return os.environ.get("POSTGRES_DSN")
 
 
 class SimplePostgres:
@@ -29,10 +29,7 @@ class SimplePostgres:
         """
         Starts a connection to a Postgres instance
         """
-        self.conn = psycopg2.connect(
-            postgres_dsn(),
-            cursor_factory=RealDictCursor
-        )
+        self.conn = psycopg2.connect(postgres_dsn(), cursor_factory=RealDictCursor)
         self.cursor = self.conn.cursor()
         return self.cursor
 
@@ -50,11 +47,11 @@ class SimplePostgres:
             self.conn.close()
 
 
-@app.route('/execute', methods=['post'])
+@app.route("/execute", methods=["post"])
 def execute():
     req = request.json
-    query = req['query']
-    args = req.get('data', {})
+    query = req["query"]
+    args = req.get("data", {})
     with SimplePostgres() as cur:
         cur.execute(query, args)
         return jsonify(cur.fetchall())
@@ -80,10 +77,10 @@ class InsertBuilder:
         self.value_strs.append(f"({','.join(map(lambda x: '%s', values))})")
 
     def names(self):
-        return ','.join(map(lambda x: f'"{x[0]}"', self.first_item))
+        return ",".join(map(lambda x: f'"{x[0]}"', self.first_item))
 
     def values(self):
-        return ','.join(self.value_strs)
+        return ",".join(self.value_strs)
 
 
 def sql_columns(columns):
@@ -91,47 +88,49 @@ def sql_columns(columns):
     Build a SQL string of column names.
     """
     if columns is None:
-        return '*'
+        return "*"
 
     assert isinstance(columns, list)
     # validate columns
     for column in columns:
         assert check_valid_sql_ident(column)
 
-    return ','.join(f'"{col}"' for col in columns)
+    return ",".join(f'"{col}"' for col in columns)
 
 
-@app.route('/insert', methods=['post'])
+@app.route("/insert", methods=["post"])
 def insert():
     req = request.json
-    table = req['table']
-    returning = req.get('returning', None)
-    if 'values' in req:
-        value = req['values']
+    table = req["table"]
+    returning = req.get("returning", None)
+    if "values" in req:
+        value = req["values"]
         # maintain backwards compatibility
         if isinstance(value, list):
             return _insertMany(table, value, returning)
         # values was allowed to be either a list (->many) or a dict
         assert isinstance(value, dict)
     else:
-        value = req['value']
+        value = req["value"]
 
     builder = InsertBuilder()
     builder.add(value)
     returning = sql_columns(returning)
-    sql = (f"INSERT INTO {table} ({builder.names()}) "
-           f"VALUES {builder.values()} RETURNING {returning}")
+    sql = (
+        f"INSERT INTO {table} ({builder.names()}) "
+        f"VALUES {builder.values()} RETURNING {returning}"
+    )
     with SimplePostgres() as cur:
         cur.execute(sql, builder.params)
         return jsonify(cur.fetchone())
 
 
-@app.route('/insertMany', methods=['post'])
+@app.route("/insertMany", methods=["post"])
 def insertMany():
     req = request.json
-    table = req['table']
-    values = req['values']
-    returning = req.get('returning', None)
+    table = req["table"]
+    values = req["values"]
+    returning = req.get("returning", None)
     return _insertMany(table, values, returning)
 
 
@@ -145,8 +144,10 @@ def _insertMany(table, values, returning):
     for e in values:
         builder.add(e)
     returning = sql_columns(returning)
-    sql = (f"INSERT INTO {table} ({builder.names()}) "
-           f"VALUES {builder.values()} RETURNING {returning}")
+    sql = (
+        f"INSERT INTO {table} ({builder.names()}) "
+        f"VALUES {builder.values()} RETURNING {returning}"
+    )
     with SimplePostgres() as cur:
         cur.execute(sql, builder.params)
         return jsonify(cur.fetchall())
@@ -182,22 +183,23 @@ class QueryBuilder:
     def build(self, where):
         query = []
         for k, v in where.items():
-            if k == '$and':
-                query.append(self.group(v, 'AND'))
-            elif k == '$or':
-                query.append(self.group(v, 'OR'))
+            if k == "$and":
+                query.append(self.group(v, "AND"))
+            elif k == "$or":
+                query.append(self.group(v, "OR"))
             else:
                 if k in QueryBuilder.operators:
                     query.append(self.op(k, v))
                 elif isinstance(v, dict):
-                    assert self.current_column is None, \
-                        f"Fields in '{self.current_column}' can't be nested."
+                    assert (
+                        self.current_column is None
+                    ), f"Fields in '{self.current_column}' can't be nested."
                     old_current_column = self.current_column
                     self.current_column = k
-                    query.append(self.group(v, 'AND'))
+                    query.append(self.group(v, "AND"))
                     self.current_column = old_current_column
                 else:
-                    query.append(f'{k}=%s')
+                    query.append(f"{k}=%s")
                     self.params.append(v)
 
         return query
@@ -205,33 +207,27 @@ class QueryBuilder:
     @staticmethod
     def build_query(where):
         if where is None or len(where) == 0:
-            return {
-                'query': '',
-                'params': []
-            }
+            return {"query": "", "params": []}
 
         builder = QueryBuilder()
-        query = builder.group(where, 'AND')
-        return {
-            'query': query,
-            'params': builder.params
-        }
+        query = builder.group(where, "AND")
+        return {"query": query, "params": builder.params}
 
 
-@app.route('/delete', methods=['post'])
+@app.route("/delete", methods=["post"])
 def delete():
     req = request.json
-    table = req['table']
-    where = req.get('where', None)
+    table = req["table"]
+    where = req.get("where", None)
 
     where_str = ""
     query = QueryBuilder.build_query(where)
-    if len(query['params']) > 0:
+    if len(query["params"]) > 0:
         where_str = f"WHERE ({query['query']}) "
 
     sql = f"DELETE FROM {table} {where_str} RETURNING *"
     with SimplePostgres() as cur:
-        cur.execute(sql, query['params'])
+        cur.execute(sql, query["params"])
         return jsonify(cur.fetchall())
 
 
@@ -251,50 +247,49 @@ def check_valid_sql_ident(ident):
     return True
 
 
-@app.route('/select', methods=['post'])
+@app.route("/select", methods=["post"])
 def select():
     req = request.json
-    table = req['table']
-    where = req.get('where', None)
-    columns = req.get('columns', None)
+    table = req["table"]
+    where = req.get("where", None)
+    columns = req.get("columns", None)
     columns = sql_columns(columns)
 
     sql = f"SELECT {columns} FROM {table}"
     query = QueryBuilder.build_query(where)
-    if len(query['params']) > 0:
+    if len(query["params"]) > 0:
         sql += f" WHERE ({query['query']})"
     with SimplePostgres() as cur:
-        cur.execute(sql, query['params'])
+        cur.execute(sql, query["params"])
         return jsonify(cur.fetchall())
 
 
-@app.route('/update', methods=['post'])
+@app.route("/update", methods=["post"])
 def update():
     req = request.json
-    table = req['table']
-    where = req.get('where', {})
-    values = sorted(req['values'].items())
+    table = req["table"]
+    where = req.get("where", {})
+    values = sorted(req["values"].items())
     update_params = list(map(lambda x: x[1], values))
-    update_str = ','.join(map(lambda x: f'"{x[0]}" = %s', values))
+    update_str = ",".join(map(lambda x: f'"{x[0]}" = %s', values))
 
     # use an optional select string
     query = QueryBuilder.build_query(where)
-    update_params.extend(query['params'])
+    update_params.extend(query["params"])
     where_str = ""
-    if len(query['query']) > 0:
+    if len(query["query"]) > 0:
         where_str = f"WHERE ({query['query']}) "
 
-    sql = (f"UPDATE {table} SET {update_str} {where_str}"
-           "RETURNING *")
+    sql = f"UPDATE {table} SET {update_str} {where_str}" "RETURNING *"
     with SimplePostgres() as cur:
         cur.execute(sql, update_params)
         return jsonify(cur.fetchall())
 
 
-@app.route('/tables/drop', methods=['post'])
+@app.route("/tables/drop", methods=["post"])
 def tables_drop():
     req = request.json
-    table = req['table']
+    table = req["table"]
 
     sql = f"DROP TABLE {table}"
     with SimplePostgres() as cur:
@@ -302,35 +297,36 @@ def tables_drop():
         return jsonify([])
 
 
-@app.route('/tables/create', methods=['post'])
+@app.route("/tables/create", methods=["post"])
 def tables_create():
     req = request.json
-    table = req['table']
-    columns = req['columns']
+    table = req["table"]
+    columns = req["columns"]
     columns_params = []
 
     for k, v in sorted(columns.items()):
         columns_params.append(f"{k} {str(v)}")
 
-    columns_str = ','.join(columns_params)
+    columns_str = ",".join(columns_params)
     sql = f"CREATE TABLE {table} ({columns_str})"
     with SimplePostgres() as cur:
         cur.execute(sql)
         return jsonify({})
 
 
-@app.route('/health', methods=['get'])
+@app.route("/health", methods=["get"])
 def health():
-    return 'OK'
+    return "OK"
 
 
 def app_error(e):
     print(traceback.format_exc())
-    return jsonify({'message': repr(e)}), 400
+    return jsonify({"message": repr(e)}), 400
 
 
 if __name__ == "__main__":
-    assert 'POSTGRES_DSN' in os.environ, \
-        "The environment variable 'POSTGRES_DSN' must be set."
+    assert (
+        "POSTGRES_DSN" in os.environ
+    ), "The environment variable 'POSTGRES_DSN' must be set."
     app.register_error_handler(Exception, app_error)
-    app.run(host='0.0.0.0', port=8000)
+    app.run(host="0.0.0.0", port=8000)
