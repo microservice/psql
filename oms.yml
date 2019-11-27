@@ -1,14 +1,20 @@
-omg: 1
+oms: 1
 info:
   version: 1.0.0
   title: PSQL
   description: Interact with a Postgres database
   license:
     name: Apache 2.0
-    url: https://opensource.org/licenses/Apache-2.0
+    url: 'https://opensource.org/licenses/Apache-2.0'
+  contact:
+    name: Open Microservices
+    url: 'https://openmicroservices.org'
+    email: core@openmicroservices.org
 lifecycle:
   startup:
-    command: ["python", "/app/app.py"]
+    command:
+      - python
+      - /app/app.py
 health:
   http:
     path: /health
@@ -28,10 +34,13 @@ actions:
         in: requestBody
         type: string
       columns:
-        help: |
+        help: >
           A map of the to be created columns with their respective types
+
           Please refer to
-          https://www.postgresql.org/docs/9.1/sql-createtable.html for more help.
+
+          https://www.postgresql.org/docs/9.1/sql-createtable.html for more
+          help.
         required: true
         in: requestBody
         type: map
@@ -252,7 +261,6 @@ actions:
         type: map
     output:
       type: any
-
 environment:
   POSTGRES_DSN:
     help: The DSN to connect to PostgresSQL.
