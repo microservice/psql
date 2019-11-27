@@ -1,8 +1,13 @@
 # _PostgreSQL_ OMG Microservice
 
-[![Open Microservice Guide](https://img.shields.io/badge/OMG%20Enabled-👍-green.svg?)](https://microservice.guide)
+> Interact with a Postgres database.
 
-Interact with a Postgres database.
+[![Open Microservice Specification Version](https://img.shields.io/badge/Open%20Microservice-1.0-477bf3.svg)](https://openmicroservices.org)
+[![Open Microservices Spectrum Chat](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/open-microservices)
+[![Open Microservices Code of Conduct](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](https://github.com/oms-services/.github/blob/master/CODE_OF_CONDUCT.md)
+[![Open Microservices Commitzen](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Direct usage in [Storyscript](https://storyscript.io/):
 
@@ -102,44 +107,50 @@ Curious to [learn more](https://docs.storyscript.io/)?
 
 ✨🍰✨
 
-## Usage with [OMG CLI](https://www.npmjs.com/package/omg)
+## Usage with [OMS CLI](https://www.npmjs.com/package/@microservices/oms)
 
 ##### Create Table
+
 ```shell
-$ omg run createTable -a table=<TABLE_NAME> -a columns=<COLUMNS_DATA> -e POSTGRES_DSN=<POSTGRES_DSN>
+oms run createTable -a table=<TABLE_NAME> -a columns=<COLUMNS_DATA> -e POSTGRES_DSN=<POSTGRES_DSN>
 ```
+
 ##### Drop Table
+
 ```shell
-$ omg run dropTable -a table=<TABLE_NAME> -e POSTGRES_DSN=<POSTGRES_DSN>
+oms run dropTable -a table=<TABLE_NAME> -e POSTGRES_DSN=<POSTGRES_DSN>
 ```
 
 ##### Insert
+
 ```shell
-$ omg run insert -a table=<TABLE_NAME> -a values=<MAP/LIST_OF_MAP_VALUES> -e POSTGRES_DSN=<POSTGRES_DSN>
+oms run insert -a table=<TABLE_NAME> -a values=<MAP/LIST_OF_MAP_VALUES> -e POSTGRES_DSN=<POSTGRES_DSN>
 ```
 
 ##### Select
+
 ```shell
-$ omg run select -a table=<TABLE_NAME> -a where=<WHERE_CONDITION> -e POSTGRES_DSN=<POSTGRES_DSN>
+oms run select -a table=<TABLE_NAME> -a where=<WHERE_CONDITION> -e POSTGRES_DSN=<POSTGRES_DSN>
 ```
 
 ##### Update
+
 ```shell
-$ omg run update -a table=<TABLE_NAME> -a values=<MAP/LIST_OF_MAP_VALUES> -a where=<WHERE_CONDITION> -e POSTGRES_DSN=<POSTGRES_DSN>
+oms run update -a table=<TABLE_NAME> -a values=<MAP/LIST_OF_MAP_VALUES> -a where=<WHERE_CONDITION> -e POSTGRES_DSN=<POSTGRES_DSN>
 ```
 
 ##### Delete
+
 ```shell
-$ omg run delete -a table=<TABLE_NAME> -a where=<WHERE_CONDITION> -e POSTGRES_DSN=<POSTGRES_DSN>
+oms run delete -a table=<TABLE_NAME> -a where=<WHERE_CONDITION> -e POSTGRES_DSN=<POSTGRES_DSN>
 ```
 
 ##### Execute
+
 ```shell
-$ omg run exec -a query=<QUERY> -a data=<DATA_FOR_QUERY_FIELDS> -e POSTGRES_DSN=<POSTGRES_DSN>
+oms run exec -a query=<QUERY> -a data=<DATA_FOR_QUERY_FIELDS> -e POSTGRES_DSN=<POSTGRES_DSN>
 ```
 
-
-**Note**: the OMG CLI requires [Docker](https://docs.docker.com/install/) to be installed.
-
 ## License
-[MIT License](https://github.com/omg-services/psql/blob/master/LICENSE).
+
+[MIT License](https://github.com/oms-services/psql/blob/master/LICENSE).
